@@ -1,26 +1,29 @@
 zepScript.onInit(function() {
     let _timer = 50;
-    let _time = 0; // _time 변수 선언 및 초기화
+    let _time = 0;
 
-    App.showCenterLabel("어떤 선택지를 고르시겠습니까?", [
-        { label: "선택지 1", value: "option1" },
-        { label: "선택지 2", value: "option2" },
-    ], function(selected){
-        // 사용자가 선택한 값 처리
-        if(selected === "option1") {
-            _timer += 10;
-        } else if(selected === "option2") {
-            _timer -= 10;
-        }
-        _time = _timer; // _time에 현재 값 반영
+    function showChoice() {
+        zepScript.showPopup("어떤 선택지를 고르시겠습니까?", [
+            { label: "선택지 1", value: "option1" },
+            { label: "선택지 2", value: "option2" },
+        ], function(selected){
+            if(selected === "option1") {
+                _timer += 10;
+            } else if(selected === "option2") {
+                _timer -= 10;
+            }
+            _time = _timer;
 
-        if(_timer <= 0){
-            App.showCenterLabel("지구 멸망");
-        } else if(_timer >= 100){
-            App.showCenterLabel("지구 환경 회복");
-        } else {
-            App.showCenterLabel("현재 시간: " + _time);
-        }
-        console.log("선택된 값:", selected, "time:", _time);
-    });
+            if(_timer <= 0){
+                zepScript.showPopup("지구 멸망");
+            } else if(_timer >= 100){
+                zepScript.showPopup("지구 환경 회복");
+            } else {
+                zepScript.showPopup("현재 시간: " + _time, [], showChoice);
+            }
+            console.log("선택된 값:", selected, "time:", _time);
+        });
+    }
+
+    showChoice();
 });

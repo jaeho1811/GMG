@@ -36,7 +36,7 @@ function startGame(player) {
     _quizInterval = setInterval(() => {
         if (_playing) {
             App.showCenterLabel(
-                `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 시간: ${_timer}`,
+                `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 목숨: ${_life},현재 점수: ${_point}`,
                 0xFFFFFF, 0x000000, 120
             );
         }

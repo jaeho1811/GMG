@@ -17,7 +17,7 @@ function cho_hangul(str) {
 
 let _point = 0;
 let _life = 3;
-let _timer = 30;
+let _timer = 300;
 let _answer = "";
 let _choanswer = "";
 let _playing = false;
@@ -28,7 +28,7 @@ let _quizPool = []; // 중복 방지용 문제 풀
 function startGame(player) {
     _playing = true;
     _playerId = player.id;
-    _timer = 60;
+    _timer = 300;
     _point = 0;
     _life = 3;
     _quizPool = [...WORDS]; // 문제 풀 초기화
@@ -38,12 +38,27 @@ function startGame(player) {
     _quizInterval = setInterval(() => {
         if (_playing) {
             App.showCenterLabel(
-                `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 목숨: ${_life},현재 점수: ${_point}`,
+                `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 목숨: ${_life},현재 점수: ${_point}, 남은 시간: ${_timer}`,
                 0xFFFFFF, 0x000000, 120
             );
         }
     }, 3000); // 3초마다 라벨 갱신
 }
+let _stateTimer = 0;
+
+App.onUpdate.Add(function(dt){
+	_stateTimer += dt;
+	
+	if(_stateTimer >= 1){
+		_stateTimer = 0;
+		_timer -= 1;
+	}
+
+	
+	if(_timer <= 0){
+			// time over then...
+	}
+})
 
 function nextQuiz(player) {
     if (_quizPool.length === 0) {

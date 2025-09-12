@@ -64,16 +64,14 @@ App.onSay.add(function(player, text) {
     if (_playing && player.id === _playerId) {
         if (text === _answer) {
             _point += 1;
-            _timer += 10;
-            App.showCenterLabel("정답입니다! +1점, +10초", 0x00FF00, 0x000000, 120);
+            App.showCenterLabel("정답입니다! +1점", 0x00FF00, 0x000000, 120);
             setTimeout(() => nextQuiz(player), 1500);
         } else {
             _life -= 1;
-            _timer -= 10;
-            App.showCenterLabel("오답입니다! 목숨 -1, -10초", 0xFF0000, 0x000000, 120);
+            App.showCenterLabel("오답입니다! 목숨 -1", 0xFF0000, 0x000000, 120);
             setTimeout(() => {
                 if (_life <= 0 || _timer <= 0) {
-                    App.showCenterLabel("목숨 없음 또는 시간 종료! 게임 종료", 0xFF0000, 0x000000, 120);
+                    App.showCenterLabel("목숨 없음 게임 종료", 0xFF0000, 0x000000, 120);
                     _playing = false;
                     if (_quizInterval) clearInterval(_quizInterval);
                 } else if (_point >= 5) {

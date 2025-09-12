@@ -17,7 +17,7 @@ function cho_hangul(str) {
 
 let _point = 0;
 let _life = 3;
-let _timer = 300;
+let _timer = 120;
 let _answer = "";
 let _choanswer = "";
 let _playing = false;
@@ -28,7 +28,7 @@ let _quizPool = []; // 중복 방지용 문제 풀
 function startGame(player) {
     _playing = true;
     _playerId = player.id;
-    _timer = 300;
+    _timer = 120;
     _point = 0;
     _life = 3;
     _quizPool = [...WORDS]; // 문제 풀 초기화

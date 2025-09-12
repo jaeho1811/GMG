@@ -23,6 +23,7 @@ let _choanswer = "";
 let _playing = false;
 let _playerId = null;
 let _quizInterval = null;
+let _quizPool = []; // 중복 방지용 문제 풀
 
 function startGame(player) {
     _playing = true;
@@ -30,6 +31,7 @@ function startGame(player) {
     _timer = 60;
     _point = 0;
     _life = 3;
+    _quizPool = [...WORDS]; // 문제 풀 초기화
     nextQuiz(player);
     // 문제 라벨을 계속 띄우기 위한 반복 타이머
     if (_quizInterval) clearInterval(_quizInterval);
@@ -44,7 +46,16 @@ function startGame(player) {
 }
 
 function nextQuiz(player) {
-    _answer = WORDS[Math.floor(Math.random() * WORDS.length)];
+    if (_quizPool.length === 0) {
+        App.showCenterLabel("문제를 모두 풀었습니다! 게임 종료", 0x00FF00, 0x000000, 120);
+        _playing = false;
+        if (_quizInterval) clearInterval(_quizInterval);
+        return;
+    }
+    // 문제 중복 방지: 남은 문제 중에서 랜덤 선택 후 제거
+    const idx = Math.floor(Math.random() * _quizPool.length);
+    _answer = _quizPool[idx];
+    _quizPool.splice(idx, 1);
     _choanswer = cho_hangul(_answer);
     App.showCenterLabel(
         `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 목숨: ${_life},현재 점수: ${_point}`,

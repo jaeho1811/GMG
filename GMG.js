@@ -33,7 +33,7 @@ function nextQuiz(player) {
     _choanswer = cho_hangul(_answer);
     App.showCenterLabel(
         `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 시간: ${_timer}`,
-        0xFFFFFF, 0x000000, 120
+        0xFFFFFF, 0x000000, 3000000000000
     );
 }
 

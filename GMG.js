@@ -22,12 +22,25 @@ let _answer = "";
 let _choanswer = "";
 let _playing = false;
 let _playerId = null;
+let _quizInterval = null;
 
 function startGame(player) {
     _playing = true;
     _playerId = player.id;
     _timer = 60;
+    _point = 0;
+    _life = 3;
     nextQuiz(player);
+    // 문제 라벨을 계속 띄우기 위한 반복 타이머
+    if (_quizInterval) clearInterval(_quizInterval);
+    _quizInterval = setInterval(() => {
+        if (_playing) {
+            App.showCenterLabel(
+                `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 시간: ${_timer}`,
+                0xFFFFFF, 0x000000, 120
+            );
+        }
+    }, 3000); // 3초마다 라벨 갱신
 }
 
 function nextQuiz(player) {
@@ -35,7 +48,7 @@ function nextQuiz(player) {
     _choanswer = cho_hangul(_answer);
     App.showCenterLabel(
         `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 시간: ${_timer}`,
-        0xFFFFFF, 0x000000,900
+        0xFFFFFF, 0x000000, 3000 // 3초 동안 표시
     );
 }
 
@@ -51,18 +64,22 @@ App.onSay.add(function(player, text) {
     if (_playing && player.id === _playerId) {
         if (text === _answer) {
             _point += 1;
-            App.showCenterLabel("정답입니다! +1점", 0x00FF00, 0x000000, 120);
+            _timer += 10;
+            App.showCenterLabel("정답입니다! +1점, +10초", 0x00FF00, 0x000000, 120);
             setTimeout(() => nextQuiz(player), 1500);
         } else {
             _life -= 1;
-            App.showCenterLabel("오답입니다! 목숨 - 1", 0xFF0000, 0x000000, 120);
+            _timer -= 10;
+            App.showCenterLabel("오답입니다! 목숨 -1, -10초", 0xFF0000, 0x000000, 120);
             setTimeout(() => {
-                if (_life <= 0) {
-                    App.showCenterLabel("목숨 없음! 게임 종료", 0xFF0000, 0x000000, 120);
+                if (_life <= 0 || _timer <= 0) {
+                    App.showCenterLabel("목숨 없음 또는 시간 종료! 게임 종료", 0xFF0000, 0x000000, 120);
                     _playing = false;
+                    if (_quizInterval) clearInterval(_quizInterval);
                 } else if (_point >= 5) {
                     App.showCenterLabel("점수 5점 달성! 게임 종료", 0x00FF00, 0x000000, 120);
                     _playing = false;
+                    if (_quizInterval) clearInterval(_quizInterval);
                 } else {
                     nextQuiz(player);
                 }

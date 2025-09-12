@@ -42,7 +42,7 @@ function startGame(player) {
                 0xFFFFFF, 0x000000, 120
             );
         }
-    }, 3000); // 3초마다 라벨 갱신
+    }, 1000); // 3초마다 라벨 갱신
 }
 let _stateTimer = 0;
 

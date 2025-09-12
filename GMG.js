@@ -31,18 +31,10 @@ function startGame(player) {
 function nextQuiz(player) {
     _answer = WORDS[Math.floor(Math.random() * WORDS.length)];
     _choanswer = cho_hangul(_answer);
-
-    // 라벨을 계속 띄우기 위해 일정 간격으로 반복 표시
-    if (_playing) {
-        App.showCenterLabel(
-            `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 시간: ${_timer}`,
-            0xFFFFFF, 0x000000, 300 // 5초 동안 표시
-        );
-        // 5초 후에 다시 라벨을 띄움 (게임이 진행 중일 때만)
-        setTimeout(() => {
-            if (_playing) nextQuiz(player);
-        }, 3000);
-    }
+    App.showCenterLabel(
+        `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 시간: ${_timer}`,
+        0xFFFFFF, 0x000000, 300
+    );
 }
 
 App.onStart.Add(function() {

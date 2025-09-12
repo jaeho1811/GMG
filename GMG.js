@@ -1,25 +1,25 @@
-// ...existing code...
 // zepScript에서 실행되는 코드로 변환
 
 let _timer = 50;
+const 정답 = "option1"; // 정답을 원하는 값으로 설정
 
 function showChoice() {
-    zep.showPopup("어떤 선택지를 고르시겠습니까?", [
+    zepScript.showPopup("어떤 선택지를 고르시겠습니까?", [
         { label: "선택지 1", value: "option1" },
         { label: "선택지 2", value: "option2" }
     ], function(selected){
-        if(selected === "option1") {
+        if(selected === 정답) {
             _timer += 10;
-        } else if(selected === "option2") {
+        } else {
             _timer -= 10;
         }
 
         if(_timer <= 0){
-            zep.showPopup("지구 멸망");
+            zepScript.showPopup("지구 멸망! 게임 종료");
         } else if(_timer >= 100){
-            zep.showPopup("지구 환경 회복");
+            zepScript.showPopup("지구 환경 회복! 게임 종료");
         } else {
-            zep.showPopup("현재 시간: " + _timer, [
+            zepScript.showPopup("현재 시간: " + _timer, [
                 { label: "다음 선택", value: "next" }
             ], function() {
                 showChoice();
@@ -29,7 +29,6 @@ function showChoice() {
     });
 }
 
-zep.onInit(function() {
+zepScript.onInit(function() {
     showChoice();
 });
-// ...existing code...

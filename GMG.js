@@ -1,45 +1,71 @@
-const quizList = [
-{ question: "ㅎㄱㅇㅇ", answer: "환경오염" },
-{ question: "ㅈㅎㅇ", answer: "재활용" },
-{ question: "ㅂㄹㅂㅊ", answer: "분리배출" },
-{ question: "ㄱㄹㅍㅅ", answer: "그린피스" },
-{ question: "ㅁㅅㅍㄹㅅㅌ", answer: "미세플라스틱" },
-{ question: "ㅇㅅㅎㅌㅅ", answer: "이산화탄소" },
-{ question: "ㅈㄱㅇㄴㅎ", answer: "지구온난화" }
+// ZEP 미니게임용: 위젯 없이 채팅과 라벨만 사용하는 초성 퀴즈
+
+const WORDS = [
+    "환경오염", "재활용", "분리배출", "그린피스", "미세플라스틱", "이산화탄소", "지구온난화"
 ];
 
-// 랜덤 배치 좌표 (예시)
-const posList = [
-{x: 10, y: 5},
-{x: 18, y: 13},
-{x: 6, y: 12},
-{x: 22, y: 8},
-{x: 5, y: 17},
-{x: 13, y: 2},
-{x: 20, y: 15}
-];
+function cho_hangul(str) {
+    const cho = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+    let result = "";
+    for (let i = 0; i < str.length; ++i ) {
+        let code = str.charCodeAt(i)-44032;
+        if(code>-1 && code<11172) result += cho[Math.floor(code/588)];
+        else result += str.charAt(i);
+    }
+    return result;
+}
 
-// 문제 위치 매핑 및 상태 저장
-let quizStatus = []; // {playerId, idx, solved}
-quizList.forEach((q, i) => {
-// 각 퀴즈 영역에 이벤트 설치
-Map.setInteractiveObject(posList[i].x, posList[i].y, {
-onInteract: (player) => {
-// 해당 퀴즈가 풀렸는지 체크
-const solved = quizStatus.find(e => e.playerId === [player.id](http://player.id/) && e.idx === i && e.solved);
-if (solved) {
-App.showCenterLabel("이미 푼 문제입니다!");
-return;
+let _timer = 60;
+let _answer = "";
+let _choanswer = "";
+let _playing = false;
+let _playerId = null;
+
+function startGame(player) {
+    _playing = true;
+    _playerId = player.id;
+    _timer = 60;
+    nextQuiz(player);
 }
-// 퀴즈 문제(초성) 내보내기
-App.showPrompt(`문제: ${quizList[i].question} (초성)\\n정답 입력:`, "", (text) => {
-if (text === quizList[i].answer) {
-quizStatus.push({playerId: [player.id](http://player.id/), idx: i, solved: true});
-App.showCenterLabel("정답입니다! 🎉");
-} else {
-App.showCenterLabel("오답입니다. 다시 도전!");
+
+function nextQuiz(player) {
+    _answer = WORDS[Math.floor(Math.random() * WORDS.length)];
+    _choanswer = cho_hangul(_answer);
+    App.showCenterLabel(
+        `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 시간: ${_timer}`,
+        0xFFFFFF, 0x000000, 120
+    );
 }
+
+App.onStart.Add(function() {
+    App.showCenterLabel("초성 퀴즈 미니게임!\n'/시작'을 채팅으로 입력해 시작하세요.", 0xFFFFFF, 0x000000, 120);
 });
-}
-});
+
+App.onSay.add(function(player, text) {
+    if (!_playing && text === "/시작") {
+        startGame(player);
+        return false;
+    }
+    if (_playing && player.id === _playerId) {
+        if (text === _answer) {
+            _timer += 10;
+            App.showCenterLabel("정답입니다! +10초", 0x00FF00, 0x000000, 120);
+            setTimeout(() => nextQuiz(player), 1500);
+        } else {
+            _timer -= 10;
+            App.showCenterLabel("오답입니다! -10초", 0xFF0000, 0x000000, 120);
+            setTimeout(() => {
+                if (_timer <= 0) {
+                    App.showCenterLabel("지구 멸망! 게임 종료", 0xFF0000, 0x000000, 120);
+                    _playing = false;
+                } else if (_timer >= 100) {
+                    App.showCenterLabel("지구 환경 회복! 게임 종료", 0x00FF00, 0x000000, 120);
+                    _playing = false;
+                } else {
+                    nextQuiz(player);
+                }
+            }, 1500);
+        }
+        return false; // 채팅창에 표시 안함
+    }
 });

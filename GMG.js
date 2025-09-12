@@ -15,7 +15,9 @@ function cho_hangul(str) {
     return result;
 }
 
-let _timer = 60;
+let _point = 0;
+let _life = 3;
+let _timer = 30;
 let _answer = "";
 let _choanswer = "";
 let _playing = false;
@@ -33,7 +35,7 @@ function nextQuiz(player) {
     _choanswer = cho_hangul(_answer);
     App.showCenterLabel(
         `초성 퀴즈!\n힌트: ${_choanswer}\n(정답을 채팅으로 입력하세요)\n남은 시간: ${_timer}`,
-        0xFFFFFF, 0x000000, 3000
+        0xFFFFFF, 0x000000,_timer * 50
     );
 }
 
@@ -48,18 +50,18 @@ App.onSay.add(function(player, text) {
     }
     if (_playing && player.id === _playerId) {
         if (text === _answer) {
-            _timer += 10;
-            App.showCenterLabel("정답입니다! +10초", 0x00FF00, 0x000000, 120);
+            _point += 1;
+            App.showCenterLabel("정답입니다! +1점", 0x00FF00, 0x000000, 120);
             setTimeout(() => nextQuiz(player), 1500);
         } else {
-            _timer -= 10;
-            App.showCenterLabel("오답입니다! -10초", 0xFF0000, 0x000000, 120);
+            _life -= 1;
+            App.showCenterLabel("오답입니다! 목숨 - 1", 0xFF0000, 0x000000, 120);
             setTimeout(() => {
-                if (_timer <= 0) {
-                    App.showCenterLabel("지구 멸망! 게임 종료", 0xFF0000, 0x000000, 120);
+                if (_life <= 0) {
+                    App.showCenterLabel("목숨 없음! 게임 종료", 0xFF0000, 0x000000, 120);
                     _playing = false;
-                } else if (_timer >= 100) {
-                    App.showCenterLabel("지구 환경 회복! 게임 종료", 0x00FF00, 0x000000, 120);
+                } else if (_point >= 5) {
+                    App.showCenterLabel("점수 5점 달성! 게임 종료", 0x00FF00, 0x000000, 120);
                     _playing = false;
                 } else {
                     nextQuiz(player);

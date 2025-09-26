@@ -17,7 +17,7 @@ function cho_hangul(str) {
 
 let _point = 0;
 let _life = 3;
-let _timer = 200;
+let _timer = 100;
 let _answer = "";
 let _choanswer = "";
 let _playing = false;

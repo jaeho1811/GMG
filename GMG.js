@@ -28,7 +28,7 @@ let _quizPool = []; // 중복 방지용 문제 풀
 function startGame(player) {
     _playing = true;
     _playerId = player.id;
-    _timer = 120;
+    _timer = 200;
     _point = 0;
     _life = 3;
     _quizPool = [...WORDS]; // 문제 풀 초기화
